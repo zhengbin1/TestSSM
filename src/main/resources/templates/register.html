@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+    <link rel="stylesheet" type="text/css" href="./css/Font-Awesome-3.2.1/css/font-awesome.min.css" />
+    <span th:replace="head_js :: head_jquery"></span>
+
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: #000000;
+        }
+
+        #main {
+            width: 60%;
+            height: auto;
+            background-color: #ffffff;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .prompt {
+            color: red;
+            margin-left: 10px;
+        }
+
+        table {
+            font-size: 20px;
+        }
+
+        .td1 {
+            width: 200px;
+            height: 30px;
+            text-align: right;
+        }
+
+        .text1 {
+            width: 350px;
+            height: 30px;
+        }
+
+        .text2 {
+            width: 200px;
+            height: 30px;
+        }
+
+        .button1 {
+            width: 120px;
+            height: 40px;
+            font-size: 20px;
+            margin-left: 50px;
+        }
+
+        input {
+            font-size: 30px;
+        }
+
+        #strength {
+            border-collapse: collapse;
+        }
+
+        #strength_L {
+            text-align: center;
+            width: 120px;
+            background-color: #EEEEEE;
+            border: 3px solid #CCCCCC;
+        }
+
+        #strength_M {
+            text-align: center;
+            width: 120px;
+            background-color: #EEEEEE;
+            border: 3px solid #CCCCCC;
+        }
+
+        #strength_H {
+            text-align: center;
+            width: 120px;
+            background-color: #EEEEEE;
+            border: 3px solid #CCCCCC;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="main">
+        <p style="text-align:center;font-size:30px;">用&nbsp;户&nbsp;注&nbsp;册</p><br />
+        <form id="formReg" name="form1" th:action="@{/register_save}" method="post" onSubmit="return confirmInput();">
+            <table>
+                <tr>
+                    <td class="td1">用户名：</td>
+                    <td><input id="username" class="text1" type="text" name="username" /></td>
+                    <td><span id="prompt1" class="prompt">英文、数字和下划线的组合</span></td>
+                </tr>
+            </table><br />
+            <table>
+                <tr>
+                    <td class="td1">密&nbsp;&nbsp;码：</td>
+                    <td><input id="password" class="text1" type="password" name="password" maxlength="10" /></td>
+                    <td><span id="prompt2" class="prompt">密码6位以上</span></td>
+                </tr>
+            </table><br />
+            <table id="strength">
+                <tr>
+                    <td class="td1">密码强度：</td>
+                    <td id="strength_L">弱</td>
+                    <td id="strength_M">中</td>
+                    <td id="strength_H">强</td>
+                </tr>
+            </table><br />
+            <table>
+                <tr>
+                    <td class="td1">确认密码：</td>
+                    <td><input id="password2" class="text1" type="password" name="password2" /></td>
+                    <td><span id="prompt3" class="prompt"></span></td>
+                </tr>
+            </table><br />
+            <!-- <table>
+                <tr>
+                    <td class="td1">性&nbsp;&nbsp;别：</td>
+                    <td>
+                        <select id="sex" name="sex" style="width:150px;height:30px;font-size:20px;">
+                            <option value="">请选择</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </td>
+                </tr>
+            </table><br />
+            <table>
+                <tr>
+                    <td class="td1">手机号码：</td>
+                    <td><input id="phone" class="text1" type="text" name="phone" /></td>
+                </tr>
+            </table><br />
+            <table>
+                <tr>
+                    <td class="td1">E-Mail：</td>
+                    <td><input id="email" class="text1" type="text" name="email" /></td>
+                </tr>
+            </table> -->
+            <br />
+            <div style="width:60%;height:auto;margin:0 auto;">
+                <input class="button1" type="submit" value="注  册" />
+                <input class="button1" type="reset" value="重  置" />
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var width = $(window).width();
+        var height = $(window).height();
+
+        if (width > height) { // 屏幕横向
+            $('#frame').width(width / 2);
+        }
+    });
+
+    function CheckChinesePin(InputValue) {
+        var teststring = /^[0-9]*[0-9][0-9]*$/
+        if (teststring.test(InputValue)) {
+            return true; //是数字
+        }
+        return false;
+    }
+
+    function CheckEmail(InputValue) {
+        var teststring = /(\w+@\w+\.\w+)(\.{0,1}\w*)(\.{0,1}\w*)/;
+        if (teststring.test(InputValue)) {
+            return true; //是邮件地址
+        }
+        return false;
+    }
+
+    // 在客户端验证用户输入合法性
+    function confirmInput() {
+        if (formReg.username.value == '') {
+            alert('请填写您的用户名!');
+            $('#username').focus();
+            return false;
+        }
+        if (formReg.username.value.length < 3) {
+            alert('您的用户名过于简单，建议您使用三个以上的字符进行注册!');
+            $('#username').focus();
+            return false;
+        }
+        if (CheckUsername(formReg.username.value)) {
+            alert('您的用户名填写有误！\n\n用户名只能是英文、数字和下划线的组合，并且第一个字符必须是英文！');
+            $('#username').focus();
+            return false;
+        }
+        if (formReg.password.value == '') {
+            alert('请您填写密码!');
+            $('#password').focus();
+            return false;
+        }
+        if (formReg.password.length < 6) {
+            alert('您填写的密码少于6位！');
+            $('#password').focus();
+            return false;
+        }
+        if (formReg.password.value != formReg.password2.value) {
+            alert('您两次输入密码不一致!');
+            $('#password').focus();
+            return false;
+        }
+        // if (formReg.sex.value == '') {
+        //     alert('请选择您的性别!');
+        //     $('#sex').focus();
+        //     return false;
+        // }
+        // if (formReg.phone.value == '') {
+        //     alert('请填写您的手机号码!');
+        //     $('#phone').focus();
+        //     return false;
+        // }
+        // if (formReg.phone.value.length != 11) {
+        //     alert('您的手机号码填写错误!');
+        //     $('#phone').focus();
+        //     return false;
+        // }
+        // if (!CheckChinesePin(formReg.phone.value)) {
+        //     alert('您的手机号码填写错误!');
+        //     $('#phone').focus();
+        //     return false;
+        // }
+        // if (formReg.email.value == '') {
+        //     alert('请填写您的E-mail地址!');
+        //     $('#email').focus();
+        //     return false;
+        // }
+        // if (!CheckEmail(formReg.email.value)) {
+        //     alert('您的E-mail地址填写错误!');
+        //     $('#email').focus();
+        //     return false;
+        // }
+        if ($('#prompt1').text() == '该用户名已经注册。') {
+            alert('该用户名已经注册。');
+            $('#username').focus();
+            return false;
+        }
+
+        return true;
+    }
+
+    //CharMode函数
+    //测试某个字符是属于哪一类.
+    function CharMode(iN) {
+        if (iN >= 48 && iN <= 57) //数字
+            return 1;
+        if (iN >= 65 && iN <= 90) //大写字母
+            return 2;
+        if (iN >= 97 && iN <= 122) //小写
+            return 4;
+        else
+            return 8; //特殊字符
+    }
+
+
+    //bitTotal函数
+    //计算出当前密码当中一共有多少种模式
+    function bitTotal(num) {
+        modes = 0;
+        for (i = 0; i < 4; i++) {
+            if (num & 1) modes++;
+            num >>>= 1;
+        }
+        return modes;
+    }
+
+    //checkStrong函数
+    //返回密码的强度级别
+
+    function checkStrong(sPW) {
+        if (sPW.length < 6) {
+            return 0; // 密码太短
+        }
+
+        Modes = 0;
+        for (i = 0; i < sPW.length; i++) {
+            //测试每一个字符的类别并统计一共有多少种模式.
+            Modes |= CharMode(sPW.charCodeAt(i));
+        }
+
+        return bitTotal(Modes);
+    }
+
+    //pwStrength函数
+    //当用户放开键盘或密码输入框失去焦点时,根据不同的级别显示不同的颜色
+
+    function pwStrength(pwd) {
+        O_color = "#EEEEEE";
+        L_color = "#FF0000";
+        M_color = "#FF9900";
+        H_color = "#33CC00";
+        if (pwd == null || pwd == '') {
+            Lcolor = Mcolor = Hcolor = O_color;
+        } else {
+            S_level = checkStrong(pwd);
+            switch (S_level) {
+                case 0:
+                    Lcolor = Mcolor = Hcolor = O_color;
+                case 1:
+                    Lcolor = L_color;
+                    Mcolor = Hcolor = O_color;
+                    break;
+                case 2:
+                    Lcolor = Mcolor = M_color;
+                    Hcolor = O_color;
+                    break;
+                default:
+                    Lcolor = Mcolor = Hcolor = H_color;
+            }
+        }
+
+
+        $('#strength_L').css('background', Lcolor);
+        $('#strength_M').css('background', Mcolor);
+        $('#strength_H').css('background', Hcolor);
+
+        return;
+    }
+
+    function CheckUsername(InputValue) {
+        //alert(InputValue.length);
+        var Str;
+        var StrAsc;
+        for (var i = 0; i < InputValue.length; i++) {
+            Str = InputValue.charAt(i);
+            StrAsc = InputValue.charCodeAt(i);
+            //alert(Str);
+
+            if (i == 0) { //第一个字符必须是英文
+                if (StrAsc >= 48 && StrAsc <= 57) {
+                    //alert("第一个字符不正确");
+                    return true;
+                }
+            } else { // 其他字符必须是英文、数字和下划线的组合
+                if ((StrAsc >= 48 && StrAsc <= 57) || (StrAsc >= 65 && StrAsc <= 90) || (StrAsc >= 97 && StrAsc <= 122) || StrAsc == 95) {
+                    //alert("字符串符合要求");
+                    //return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+        //alert("字符串验证完毕");
+        return false;
+    }
+
+    //生成随机参数
+    function getRnd() {
+        var mydate = new Date();
+        var rnd = Math.floor(Math.random() * 9999) + 1;
+        var result = mydate.getHours().toString() + mydate.getMinutes().toString() + mydate.getSeconds().toString() + rnd;
+        return result;
+    }
+
+    //字符串为空
+    function isNull(str) {
+        if (str == null || str == "" || str.length < 1)
+            return true;
+        else
+            return false;
+    }
+
+    $(document).ready(function() {
+        /* 判断用户名是否已注册  */
+        $('#username').blur(function() {
+            var uname = $('#username').val();
+            if (!isNull(uname) && !CheckUsername(uname)) {
+                var url = '/regusernameajax';
+                var data = {
+                    username: uname
+                };
+                $.post(url, data, function(result) {
+
+                    if (result == "true") {
+                        $('#prompt1').text('该用户名已经注册。');
+                    } else if (result == "false") {
+                        $('#prompt1').text('没有注册可以使用。');
+                    }
+
+                }, 'text');
+            }
+        });
+
+        $('#password').keyup(function() {
+            var tmp = $('#password').val();
+            pwStrength(tmp);
+            if (checkStrong(tmp) == 0) {
+                $('#prompt2').text('密码太短。');
+            } else {
+                $('#prompt2').html('<img src="./images/ok.gif"/>');
+            }
+        });
+
+        $('#password2').keyup(function() {
+            if (formReg.password.value == formReg.password2.value) {
+                $('#prompt3').html('<img src="./images/ok.gif"/>');
+            } else {
+                $('#prompt3').text('您两次输入密码不一致!');
+            }
+        });
+
+        $('#password').blur(function() {
+            $('#strength_L').css('background-color', '#EEEEEE');
+            $('#strength_M').css('background-color', '#EEEEEE');
+            $('#strength_H').css('background-color', '#EEEEEE');
+        });
+    });
+</script>

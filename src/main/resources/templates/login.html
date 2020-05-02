@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>登录页面</title>
+    <link rel="stylesheet" type="text/css" href="./css/login.css">
+    <link rel="stylesheet" type="text/css" href="./css/Font-Awesome-3.2.1/css/font-awesome.min.css" />
+    <span th:replace="head_js :: head_jquery"></span>
+</head>
+<body>
+
+<div id="loginbox">
+    <div id="loginboxhead">&nbsp;&nbsp;<span class="icon-user icon-large"></span></div>
+    <br />
+    <div class="content">
+        <span th:if="${param.error}" class="span1">
+            Invalid username and password.
+        </span>
+        <span th:if="${param.logout}" class="span1">
+            You have been logged out.
+        </span>
+        <div id="login_user" style="padding-left: 50px; display: none;"></div>
+
+        <form id="formlogin" th:action="@{/form}" method="post" onSubmit="return confirmInput();">
+            <table>
+                <tr>
+                    <td class="td1">用户名：</td>
+                    <td class="td2"><input id="username" name="username" type="text" size="30" /></td>
+                </tr>
+                <tr>
+                    <td class="td1">密&nbsp;&nbsp;码：</td>
+                    <td class="td2"><input id="password" name="password" type="password" size="30" /></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td class="td1"><span class="prompt">点击刷新：</span></td>
+                    <td class="td2"><a href="javascript:void(0);" onclick="changecode();">
+                            <img th:src="@{/verifycode}" id="codeImg" width="100px" height="50px" style="border:1px solid #cccccc; vertical-align:middle;" alt="验证码图片，点我换新图" />
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td1">验证码：</td>
+                    <td class="td2"><input id="checkcode" type="text" name="checkcode" disabled="disabled" /></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td class="td3"><input type="submit" value="登  录"/></td>
+                    <td class="td4"><input type="reset" value="重  置" /></td>
+                    <td class="td5"><a th:href="@{/register}"><button type="button">注 册</button></a></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+
+
+<script type="text/javascript" language="javascript">
+    //生成随机参数
+    function getRand() {
+        var mydate = new Date();
+        var rnd = Math.floor(Math.random() * 9999) + 1;
+        var result = mydate.getHours().toString() + mydate.getMinutes().toString() + mydate.getSeconds().toString() + rnd;
+        return result;
+    }
+
+    function changecode(){ // 更换验证码
+        $('#codeImg').attr("src", "[[@{/}]]verifycode"  + "?rnd=" + getRand());
+    }
+
+    //字符串为空
+    function isNull(str) {
+        if (str == null || str == "" || str.length < 1)
+            return true;
+        else
+            return false;
+    }
+
+     //在客户端验证用户输入合法性
+    function confirmInput()
+    {
+        if(formlogin.username.value == ''){
+            alert('请填写您的用户名!');
+            $('#username').focus();
+            return false;
+        }
+
+        if(formlogin.password.value == ''){
+            alert('请填写您的密码!');
+            $('#password').focus();
+            return false;
+        }
+
+        return true;
+    }
+
+    window.onload = function(event){
+
+        var event = window.event || event;
+
+        var loginboxObj = document.getElementById('loginbox');
+
+        var posX = document.body.offsetWidth / 2 - loginboxObj.offsetWidth / 2;
+
+        loginboxObj.style.left = posX + 'px';
+        loginboxObj.style.top = '200px';
+
+        document.getElementById('loginboxhead').onmousedown = function(event){
+            var event = window.event || event;
+
+            var loginboxObj = document.getElementById('loginbox');
+
+            var top = loginboxObj.offsetTop;
+            var left = loginboxObj.offsetLeft;
+
+            var elementX = parseInt(event.clientX - left);
+            var elementY = parseInt(event.clientY - top);
+
+            document.onmousemove = function(event){
+                var event = window.event || event;
+
+                var X = parseInt(event.clientX - elementX);
+                var Y = parseInt(event.clientY - elementY);
+
+                var winW = document.documentElement.clientWidth || document.body.clientWidth;
+                var winH = document.documentElement.clientHeight || document.body.clientHeight;
+
+                var maxW = winW - loginboxObj.offsetWidth;
+                var maxH = winH - loginboxObj.offsetHeight;
+
+                if (X < 0){
+                    X = 0;
+                } else if(X > maxW){
+                    X = maxW;
+                }
+
+                if (Y < 0){
+                    Y = 0
+                } else if(Y > maxH){
+                    Y = maxH;
+                }
+
+                loginboxObj.style.left = X + 'px';
+                loginboxObj.style.top = Y + 'px';
+            }
+        }
+
+        document.getElementById('loginboxhead').onmouseup = function(event){
+            document.onmousemove = null;
+        }
+
+        $('#loginboxhead').tooltip({
+            position: 'top',
+            content: '<span style="color:#fff">拖动可以移动</span>',
+            onShow: function(){
+                $(this).tooltip('tip').css({
+                    backgroundColor: '#666',
+                    borderColor: '#666'
+                });
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
